@@ -56,4 +56,12 @@
   .title {
     padding: 0px;
   }
+  .hamburger-panel {
+    position: absolute;
+    right: 0;
+    z-index: 2000;
+  }
+  ul.icons>li {
+    float: right;
+  }
 }

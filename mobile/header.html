@@ -22,13 +22,52 @@
     },
   });
 
+  const { wantsNewWindow } = require('discourse/lib/intercept-click');
+  const DiscourseURL = require('discourse/lib/url').default;
+
+  api.createWidget('brand-logo', {
+    tagName: 'div.title',
+
+    logo() {
+      const mobileView = this.site.mobileView;
+
+      const mobileLogoUrl = settings.mobile_logo_url || "";
+      const showMobileLogo = mobileView && (mobileLogoUrl.length > 0);
+
+      const logoUrl = settings.logo_url || "";
+      const title = settings.brand_name;
+
+      if (showMobileLogo) {
+        return h('img#brand-logo.logo-big', { key: 'logo-mobile', attributes: { src: mobileLogoUrl, alt: title } });
+      } else if (logoUrl.length) {
+        return h('img#brand-logo.logo-big', { key: 'logo-big', attributes: { src: logoUrl, alt: title } });
+      } else {
+        return h('h2#brand-text-logo.text-logo', { key: 'logo-text' }, title);
+      }
+    },
+
+    html() {
+      return h('a', { attributes: { href: settings.website_url } }, this.logo());
+    },
+
+    click(e) {
+      if (wantsNewWindow(e)) { return false; }
+      e.preventDefault();
+      DiscourseURL.routeToTag(e.target.closest('a'));
+      return false;
+    }
+  });
+
   api.createWidget('hamburger-brand-menu', {
     tagName: 'div.hamburger-panel',
 
     panelContents(generalLinks, iconLinks) {
       const results = [];
 
-      results.push(this.attach('brand-logo'));
+      if (!settings.show_bar_on_mobile || !settings.collapse_links_on_mobile) {
+        results.push(this.attach('brand-logo'));
+      }
+
       results.push(h('hr'));
       results.push(this.attach('menu-links', { contents: () => generalLinks }));
       results.push(this.attach('nav-icons', { contents: () => iconLinks }));
@@ -51,8 +90,8 @@
       later(() => this.sendWidgetAction("toggleBrandMenu"), 200);
     }
   });
-
-  if (!settings.show_bar_on_mobile) {
+  
+  if (!settings.show_bar_on_mobile || settings.show_bar_on_mobile && settings.collapse_links_on_mobile) {
     api.reopenWidget('brand-header', {
       defaultState() {
         let states =  {
@@ -76,18 +115,26 @@
         const { siteSettings } = this;
         const panelContents = [];
 
+        if (settings.show_bar_on_mobile && settings.collapse_links_on_mobile) {
+          panelContents.push(this.attach('brand-logo'));
+        }
+
         panelContents.push(this.attach('brand-header-icon', { brandMenuVisible: state.brandMenuVisible }));
 
         if (state.brandMenuVisible) {
           panelContents.push(this.attach('hamburger-brand-menu', { generalLinks: this.generalLinks(), iconLinks: this.iconLinks() }));
         }
 
-        return panelContents;
+        return settings.show_bar_on_mobile && settings.collapse_links_on_mobile ?
+          h('div.wrap', h('div.contents.clearfix', panelContents)) :
+          panelContents;
       }
     });
 
-    api.decorateWidget("home-logo:before", helper => {
-      return [helper.widget.attach('brand-header')];
-    });
+    if (!settings.show_bar_on_mobile || !settings.collapse_links_on_mobile) {
+      api.decorateWidget("home-logo:before", helper => {
+        return [helper.widget.attach('brand-header')];
+      });
+    }
   }
 </script>

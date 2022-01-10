@@ -24,3 +24,7 @@ custom_font_awesome_icons:
 show_bar_on_mobile:
   type: bool
   default: false
+collapse_links_on_mobile:
+  type: bool
+  default: false
+  description: "Render bar links as hamburger menu (only when 'show bar on mobile' is enabled)"
