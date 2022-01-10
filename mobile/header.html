@@ -66,9 +66,9 @@
 
       if (!settings.show_bar_on_mobile || !settings.collapse_links_on_mobile) {
         results.push(this.attach('brand-logo'));
+        results.push(h('hr'));
       }
 
-      results.push(h('hr'));
       results.push(this.attach('menu-links', { contents: () => generalLinks }));
       results.push(this.attach('nav-icons', { contents: () => iconLinks }));
 
