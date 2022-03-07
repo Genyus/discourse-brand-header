@@ -32,7 +32,7 @@
 }
 
 // applies when show_bar_on_mobile is checked
-.above-site-header-outlet .b-header {
+.above-site-header-outlet.brand-header .b-header {
   width: 100%;
   background-color: var(--tertiary);
   height: 48px;
@@ -54,14 +54,78 @@
     }
   }
   .title {
-    padding: 0px;
+    padding: 0 0 0 10px;
   }
   .hamburger-panel {
     position: absolute;
+	top: 0;
+	left: 0;
     right: 0;
     z-index: 2000;
+
+	.menu-panel {
+	  border: none;
+	  box-shadow: none;
+	  padding: 0;
+	  height: 100vh;
+	  width: 100%;
+
+	  ul.menu-links{
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-start;
+		align-items: center;
+		height: 100%;
+		box-sizing: border-box;
+		padding-top: 60px;
+
+		li {
+			margin-top: 30px;
+			margin-bottom: 30px;
+			text-align: center;
+
+			a {
+				line-height: 1.5;
+				font-size: 4vh;
+				font-weight: bold;
+
+				&:hover {
+					background-color: inherit;
+					color: var(--tertiary);
+					text-decoration: none;
+				}
+			}
+
+			&:nth-child(3) {
+				a {
+					color: var(--tertiary);
+				}
+			}
+		}
+	  }
+	}
   }
   ul.icons>li {
     float: right;
+    position: initial;
+    right: 0;
+    z-index: 9999;
+
+    a {
+      color: var(--header-primary);
+    }
+	&.header-dropdown-toggle{
+		margin-right: 20px;
+
+		&.active {
+			margin-right: 0;
+			position: fixed;
+			right: 14px;
+		}
+	}
   }
+}
+
+#main .above-site-header-outlet.brand-header {
+	z-index: 2000;
 }
